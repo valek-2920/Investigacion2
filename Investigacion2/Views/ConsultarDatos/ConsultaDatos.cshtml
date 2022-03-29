@@ -1,16 +1,42 @@
-﻿@using Investigacion2.Models
-
+﻿@model Investigacion2.Models.Data
 
 @{
     ViewBag.Title = "ConsultaDatos";
-    var data = ViewBag.res;
 }
 
-<p>ConsultaDatos</p>
+<p>Aplicacion de Tipo de cambio</p>
 
 <br />
+
+<table>
+    <tr>
+        <th>Digite el monto en colones</th>
+        <th>Procesar</th>
+    </tr>
+</table>
+
 <br />
 
-<span>@data.respuesta</span>
+@using (Html.BeginForm("ConsultarDatos"))
+{
+    <div>
+        <div>
+            @Html.LabelFor(m => m.input_tcc)
+            @Html.TextBoxFor(m => m.input_tcc)
+        </div>
+        <div>
+            @Html.LabelFor(m => m.input_tcv)
+            @Html.TextBoxFor(m => m.input_tcv)
+        </div>
+    </div>
 
+    <input type="submit" value="Send" />
+}
 
+<br />
+
+<span>Indicadores</span>
+<br />
+@Html.DisplayFor(m => m.value_tcc)
+<br />
+@Html.DisplayFor(m => m.value_tcv)

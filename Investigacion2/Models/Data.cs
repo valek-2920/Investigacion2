@@ -7,10 +7,10 @@ namespace Investigacion2.Models
 {
     public class Data
     {
-
-        public DateTime fecha { get; set; }
-        public float valor { get; set; } 
-
-        public string respuesta { get; set; }
+        public Dictionary<String, Dictionary<String, String>> respuesta;
+        public string input_tcc { get; set; }
+        public string input_tcv { get; set; }
+        public string value_tcc { get; set; }
+        public string value_tcv { get; set; }
     }
 }

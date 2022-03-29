@@ -7,36 +7,35 @@ using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace Investigacion2.Controllers
 {
     public class ConsultarDatosController : Controller
     {
-
-        Data res = new Data();
-
-        public ActionResult ConsultaDatos()
+        public ActionResult ConsultaDatos(Data data)
         {
-            res.fecha = DateTime.Now;
-            res.valor = 640.00F;
-            res.respuesta = "test";
-
-            using (var client = new HttpClient())
+            if (!String.IsNullOrEmpty(data.input_tcv) || !String.IsNullOrEmpty(data.input_tcc)) 
             {
-              //string ruta = ConfigurationManager.AppSettings[""].ToString();
-              string ruta = "https://api.hacienda.go.cr/indicadores/tc/dolar";
-
-                HttpResponseMessage respuesta = client.GetAsync(ruta).Result;
-
-                if (respuesta.IsSuccessStatusCode)
+                using (var client = new HttpClient())
                 {
-                    var datos = respuesta.Content.ReadAsStringAsync().Result.ToString();
-                   // res = JsonConvert.DeserializeObject<Data>(datos);
-                   res.respuesta = datos;
+                    //string ruta = ConfigurationManager.AppSettings[""].ToString();
+                    string ruta = "https://api.hacienda.go.cr/indicadores/tc/dolar";
+
+                    HttpResponseMessage respuesta = client.GetAsync(ruta).Result;
+
+                    if (respuesta.IsSuccessStatusCode)
+                    {
+                        var datos = respuesta.Content.ReadAsStringAsync().Result;
+                        var values = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(datos);
+                        data.respuesta = values;
+
+                        data.value_tcv = (Convert.ToDouble(data.respuesta["compra"]["valor"]) * Convert.ToDouble(data.input_tcc)).ToString();
+                        data.value_tcc = (Convert.ToDouble(data.respuesta["venta"]["valor"]) * Convert.ToDouble(data.input_tcv)).ToString();
+                    }
                 }
-                ViewBag.res = res;
-                return View();
             }
+            return View(data);
         }
     }
 }
